@@ -22,8 +22,15 @@ jobs:
   build_course:
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout pipelines repository
+        uses: actions/checkout@v2
+        with:
+          repository: desotech-it/pipelines
+
       - name: Checkout this repository
         uses: actions/checkout@v2
+        with:
+          path: docs
 
       - name: Checkout dscourses repository
         uses: actions/checkout@v2
