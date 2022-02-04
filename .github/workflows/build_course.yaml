@@ -21,6 +21,8 @@ jobs:
     steps:
       - name: Checkout this repository
         uses: actions/checkout@v2
+        with:
+          token: '${{ secrets.PAT }}'
 
       - name: Checkout course repository
         uses: actions/checkout@v2
