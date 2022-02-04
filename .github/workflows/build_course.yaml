@@ -161,3 +161,7 @@ jobs:
       - name: Link assets folder
         shell: sh
         run: ln -fs ../assets docs/assets
+
+      - name: Build Site
+        shell: sh
+        run: mkdocs build
