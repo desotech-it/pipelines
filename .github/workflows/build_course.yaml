@@ -21,20 +21,18 @@ jobs:
     steps:
       - name: Checkout this repository
         uses: actions/checkout@v2
-        with:
-          token: '${{ secrets.PAT }}'
 
       - name: Checkout course repository
         uses: actions/checkout@v2
         with:
-          token: '${{ secrets.PAT }}'
+          ssh-key: '${{ secrets.DSCOURSES_SSH_KEY }}'
           repository: 'desotech-it/${{ inputs.course_code }}'
           path: docs
 
       - name: Checkout dscourses repository
         uses: actions/checkout@v2
         with:
-          token: '${{ secrets.PAT }}'
+          ssh-key: '${{ secrets.DSCOURSES_SSH_KEY }}'
           repository: desotech-it/dscourses
           path: dscourses
 
