@@ -1,0 +1,156 @@
+name: Build Course
+on:
+  workflow_call:
+    inputs:
+      course_code:
+        description: Code of the course to build
+        required: true
+        type: string
+      course_description:
+        description: Description of the course to build
+        required: true
+        type: string
+      pdf_name:
+        description: Name of the resulting PDF file for the course
+        required: true
+        type: string
+
+jobs:
+  build_course:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout this repository
+        uses: actions/checkout@v2
+
+      - name: Checkout course repository
+        uses: actions/checkout@v2
+        with:
+          token: '${{ secrets.PAT }}'
+          repository: 'desotech-it/${{ inputs.course_code }}'
+          path: docs
+
+      - name: Checkout dscourses repository
+        uses: actions/checkout@v2
+        with:
+          token: '${{ secrets.PAT }}'
+          repository: desotech-it/dscourses
+          path: dscourses
+
+      - id: string
+        uses: ASzc/change-string-case-action@v1
+        with:
+          string: '${{ inputs.course_code }}'
+
+      - name: Get current year
+        id: year
+        run: echo "::set-output name=year::$(date +%Y)"
+
+      - name: Generate MkDocs Configuration
+        shell: sh
+        # run: "exec ./generate_mkdocs_config.sh '${{ steps.string.outputs.uppercase}}' '${{ env.COURSE_DESCRIPTION }}' '${{ env.PDF_NAME }}'"
+        run: |
+          cat > mkdocs.yml <<EOF
+          site_name: '${{ inputs.course_name }}'
+          site_url: https://www.deso.tech
+          site_description: '${{ inputs.course_description }}'
+          site_author: Desotech TM
+          copyright: Copyright &copy; 2016 - ${{ steps.year.outputs.year }} Desotech
+          use_directory_urls: false
+          theme:
+            name: null
+            custom_dir: material
+            highlightjs: true
+            hljs_languages:
+              - yaml
+            features:
+              - header.autohide
+              - toc.integrate
+            include_sidebar: true
+            static_templates:
+              - 404.html
+            include_search_page: false
+            search_index_only: true
+            language: en
+            feature:
+              tabs: false
+            palette:
+              primary: grey
+              accent: grey
+            font:
+              text: Roboto
+              code: Roboto Mono
+            favicon: assets/favicon.ico
+            logo: assets/desotech-cubo-small.png
+          markdown_extensions:
+            - admonition
+            - abbr
+            - attr_list
+            - def_list
+            - footnotes
+            - meta
+            - toc:
+                permalink: true
+            - pymdownx.arithmatex:
+                generic: true
+            - pymdownx.betterem:
+                smart_enable: all
+            - pymdownx.caret
+            - pymdownx.critic
+            - pymdownx.details
+            - pymdownx.emoji:
+                emoji_index: !!python/name:materialx.emoji.twemoji
+                emoji_generator: !!python/name:materialx.emoji.to_svg
+            - pymdownx.highlight
+            - pymdownx.inlinehilite
+            - pymdownx.keys
+            - pymdownx.mark
+            - pymdownx.smartsymbols
+            - pymdownx.snippets:
+                check_paths: true
+            - pymdownx.superfences:
+                custom_fences:
+                  - name: mermaid
+                    class: mermaid
+                    format: !!python/name:pymdownx.superfences.fence_code_format
+            - pymdownx.tabbed
+            - pymdownx.tasklist:
+                custom_checkbox: true
+            - pymdownx.tilde
+          plugins:
+            - minify:
+                minify_html: false
+            - codeinclude
+            - awesome-pages
+            - img2fig
+            - exclude:
+                glob:
+                  - mkdocs.yml
+                  - '*.incomplete'
+                  - 'drafts/*'
+            - with-pdf:
+                author: Desotech srl
+                copyright: ${{ steps.year.outputs.year }} Desotech srl or its affiliates. All rights reserved.
+                cover_logo: assets/logopdf.png
+                cover: true
+                back_cover: true
+                cover_subtitle: '${{ inputs.course_description }}'
+                ordered_chapter_level: 2
+                render_js: true
+                headless_chrome_path: chrome
+                output_path: 'pdf/${{ inputs.pdf_name }}'
+                debug_html: false
+                show_anchors: false
+                verbose: false
+          EOF
+
+      - name: Set Up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+
+      - name: Set Up Chromium
+        uses: browser-actions/setup-chrome@latest
+
+#       - name: Deploy
+#         shell: sh
+#         run: "exec ./deploy.sh '${{ steps.string.outputs.lowercase }}'"
