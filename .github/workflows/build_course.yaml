@@ -158,6 +158,6 @@ jobs:
           python3 -m pip install --upgrade pip
           python3 -m pip install -r requirements.txt
 
-#       - name: Deploy
-#         shell: sh
-#         run: "exec ./deploy.sh '${{ steps.string.outputs.lowercase }}'"
+      - name: Link assets folder
+        shell: sh
+        run: ln -fs ../assets docs/assets
