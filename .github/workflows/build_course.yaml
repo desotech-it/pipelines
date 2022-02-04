@@ -171,7 +171,7 @@ jobs:
 
       - name: Copy Output Files
         shell: sh
-        run: rsync -r --delete site/ dscourses/${{ inputs.course_code }}
+        run: rsync -r --delete site/ dscourses/${{ steps.string.outputs.lowercase }}
 
       - name: Push Changes
         shell: sh
