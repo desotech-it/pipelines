@@ -169,3 +169,16 @@ jobs:
       - name: Copy Output Files
         shell: sh
         run: rsync -r --delete site/ dscourses/${{ inputs.course_code }}
+
+      - name: Push Changes
+        shell: sh
+        run: |
+          git -C dscourses config --local user.name 'GitHub Actions'
+          git -C dscourses config --local user.email actions@desotech.it
+          git -C dscourses add -A
+          if git -C dscourses commit -m 'Update ${{ inputs.course_code }}'
+          then
+            git -C dscourses push
+          else
+            echo 'Nothing to commit. The site is already up-to-date.'
+          fi
