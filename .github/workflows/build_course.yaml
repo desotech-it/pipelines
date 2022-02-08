@@ -50,7 +50,6 @@ jobs:
 
       - name: Generate MkDocs Configuration
         shell: sh
-        # run: "exec ./generate_mkdocs_config.sh '${{ steps.string.outputs.uppercase}}' '${{ env.COURSE_DESCRIPTION }}' '${{ env.PDF_NAME }}'"
         run: |
           cat > mkdocs.yml <<EOF
           site_name: '${{ inputs.course_name }}'
