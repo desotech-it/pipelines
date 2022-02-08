@@ -130,20 +130,20 @@ jobs:
                   - mkdocs.yml
                   - '*.incomplete'
                   - 'drafts/*'
-            # - with-pdf:
-            #     author: Desotech srl
-            #     copyright: ${{ steps.year.outputs.year }} Desotech srl or its affiliates. All rights reserved.
-            #     cover_logo: assets/logopdf.png
-            #     cover: true
-            #     back_cover: true
-            #     cover_subtitle: '${{ inputs.course_description }}'
-            #     ordered_chapter_level: 2
-            #     render_js: true
-            #     headless_chrome_path: chrome
-            #     output_path: 'pdf/${{ inputs.pdf_name }}'
-            #     debug_html: false
-            #     show_anchors: false
-            #     verbose: false
+            - with-pdf:
+                author: Desotech srl
+                copyright: ${{ steps.year.outputs.year }} Desotech srl or its affiliates. All rights reserved.
+                cover_logo: assets/logopdf.png
+                cover: true
+                back_cover: true
+                cover_subtitle: '${{ inputs.course_description }}'
+                ordered_chapter_level: 2
+                render_js: true
+                headless_chrome_path: chrome
+                output_path: 'pdf/${{ inputs.pdf_name }}'
+                debug_html: false
+                show_anchors: false
+                verbose: false
           EOF
 
       - name: Set Up Python
