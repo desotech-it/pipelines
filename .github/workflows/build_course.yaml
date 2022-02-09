@@ -52,7 +52,7 @@ jobs:
         shell: sh
         run: |
           cat > mkdocs.yml <<EOF
-          site_name: '${{ inputs.course_code }} - ${{ inputs.course_description }}'
+          site_name: '${{ inputs.course_code }}'
           site_url: https://www.deso.tech
           site_description: '${{ inputs.course_description }}'
           site_author: Desotech TM
