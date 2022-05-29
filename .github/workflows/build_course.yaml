@@ -152,6 +152,8 @@ jobs:
 
       - name: Set Up Chromium
         uses: browser-actions/setup-chrome@latest
+        with:
+          chrome-version: stable
 
       - name: Install Python Dependencies
         shell: sh
