@@ -1,7 +1,7 @@
 # Pipelines
 
 
-DSK201: 1.26.4
+DSK201: with_cilium
 
 DSK200: 1.27.2
 
