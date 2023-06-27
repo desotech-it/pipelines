@@ -1,6 +1,6 @@
 name: Build Course
 on:
-  workflow_call:
+  workflow_dispatch:
     inputs:
       course_code:
         description: Code of the course to build
@@ -27,17 +27,25 @@ jobs:
         with:
           repository: desotech-it/pipelines
 
-      - name: Checkout this repository
+      - name: Get active branch
+        id: active-branch
+        run: |
+          echo "active-branch=$(jq -r .${{ inputs.course_code }} ./branches.json)" >> "$GITHUB_OUTPUT"
+
+      - name: Checkout ${{ inputs.course_code }} repository
         uses: actions/checkout@v2
         with:
+          repository: ${{ github.repository_owner }}/${{ inputs.course_code }}
           path: docs
+          ref: ${{ steps.active-branch.outputs.active-branch }}
+          token: ${{ secrets.PAT_TOKEN }}
 
       - name: Checkout dscourses repository
         uses: actions/checkout@v2
         with:
-          ssh-key: '${{ secrets.dscourses_ssh_key }}'
-          repository: desotech-it/dscourses
+          repository: ${{ github.repository_owner }}/dscourses
           path: dscourses
+          token: ${{ secrets.PAT_TOKEN }}
 
       - id: string
         uses: ASzc/change-string-case-action@v1
