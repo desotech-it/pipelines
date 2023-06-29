@@ -53,8 +53,8 @@ jobs:
           string: '${{ inputs.course_code }}'
 
       - name: Get current year
-        id: year
-        run: echo "::set-output name=year::$(date +%Y)"
+        id: current-year
+        run: echo "current-year=$(date +%Y)" >> "$GITHUB_OUTPUT"
 
       - name: Generate MkDocs Configuration
         shell: sh
@@ -64,7 +64,7 @@ jobs:
           site_url: https://www.deso.tech
           site_description: '${{ inputs.course_description }}'
           site_author: Desotech TM
-          copyright: Copyright &copy; 2016 - ${{ steps.year.outputs.year }} Desotech
+          copyright: Copyright &copy; 2016 - ${{ steps.current-year.outputs.current-year }} Desotech
           use_directory_urls: false
           theme:
             name: null
