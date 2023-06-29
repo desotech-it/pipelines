@@ -30,7 +30,7 @@ jobs:
       - name: Get active branch
         id: active-branch
         run: |
-          echo "active-branch=$(jq -r .${{ inputs.course_code }} ./branches.json)" >> "$GITHUB_OUTPUT"
+          echo "active-branch=$(jq -r 'if has(\".${{ inputs.course_code }}\") then .${{ inputs.course_code }} else \"\" end' ./branches.json)" >> "$GITHUB_OUTPUT"
 
       - name: Checkout ${{ inputs.course_code }} repository
         uses: actions/checkout@v2
