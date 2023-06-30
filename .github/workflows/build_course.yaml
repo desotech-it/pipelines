@@ -185,7 +185,7 @@ jobs:
 
       - name: Copy Output Files
         shell: sh
-        run: rsync -r --delete site/ dscourses/${{ steps.string.outputs.lowercase }}
+        run: rsync -r --delete site/ --exclude password.txt --exclude .htpasswd dscourses/${{ steps.string.outputs.lowercase }}
 
       - name: Push Changes
         run: |
