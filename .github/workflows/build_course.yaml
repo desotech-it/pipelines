@@ -18,6 +18,8 @@ on:
       dscourses_ssh_key:
         required: true
 
+concurrency: dscourses-writer
+
 jobs:
   build_course:
     runs-on: ubuntu-latest
