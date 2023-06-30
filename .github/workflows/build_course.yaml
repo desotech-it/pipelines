@@ -24,15 +24,19 @@ jobs:
   build_course:
     runs-on: ubuntu-latest
     steps:
+      - id: course-code
+        run: course_code=${{ inputs.course_code }} ; echo lowercase=${course_code,,} >> "$GITHUB_OUTPUT"
+
       - name: Checkout pipelines repository
         uses: actions/checkout@v2
         with:
-          repository: desotech-it/pipelines
+          repository: ${{ github.repository_owner }}/pipelines
 
       - name: Get active branch
         id: active-branch
         run: |
-          echo active-branch=$(jq -r 'if has("${{ inputs.course_code }}") then .${{ inputs.course_code }} else "" end' ./branches.json) >> "$GITHUB_OUTPUT"
+          course_code=${{ steps.course-code.outputs.lowercase }}
+          echo active-branch=$(jq -r 'if has("$course_code") then .$course_code else "" end' ./branches.json) >> "$GITHUB_OUTPUT"
 
       - name: Checkout ${{ inputs.course_code }} repository
         uses: actions/checkout@v2
@@ -48,11 +52,6 @@ jobs:
           repository: ${{ github.repository_owner }}/dscourses
           path: dscourses
           token: ${{ secrets.PAT_TOKEN }}
-
-      - id: string
-        uses: ASzc/change-string-case-action@v5
-        with:
-          string: '${{ inputs.course_code }}'
 
       - name: Get current year
         id: current-year
