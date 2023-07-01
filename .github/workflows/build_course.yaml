@@ -55,7 +55,6 @@ jobs:
           result='${{ inputs.course_description }}' ; result="${result,,}" ; echo result="${result//+([[:space:]])/-}.pdf" >> "$GITHUB_OUTPUT"
 
       - name: Generate MkDocs Configuration
-        shell: sh
         run: |
           cat > mkdocs.yml <<EOF
           site_name: '${{ inputs.course_code }}'
@@ -157,25 +156,21 @@ jobs:
           chrome-version: '848897'
 
       - name: Install Python Dependencies
-        shell: sh
         run: |
           set -eu
           python3 -m pip install --upgrade pip
           python3 -m pip install -r requirements.txt
 
       - name: Link assets folder
-        shell: sh
         run: ln -fs ../assets docs/assets
 
       - name: Build Site
-        shell: sh
         run: mkdocs build
 
       - name: Add Favicon
         run: base64 -d > site/favicon.ico <<< 'AAABAAEAEBAAAAEAIABoBAAAFgAAACgAAAAQAAAAIAAAAAEAIAAAAAAAAAQAABILAAASCwAAAAAAAAAAAAD//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////v///v7////////////////////////////////////////////////////////////////////////+/v/+/v7///////79/f/////////////////////////////////29vb/8PDw/+7u7v/s7Oz/7Ozs/+vq6v/v8PH/8PHx/+zr6v/3+vz/7Ozr/+vq5//s6+j/7e3t//Dw8P/29vX/9fX1/+/v7//s7Oz/6urq/+jo6P/q6+z/4+De/31eN/9pRhL/qZd//+zu8v/r8P//7fH9/+zt7//v7u7/9PT0///////////////////////9/Pv//////7Khif9WLwD/Z0ID/1cvAf/Zy63/9Nh3/+7Wh//+/PT//////////v///////////////////////fz7//////+8pYf/XSwA/2I8AP9xUyL/27hG/9ymAP/XoAD/7dWA///////+/fv////////////+//////////7+/v//////1e7m/5qef/93TBf/gWIy//HIM//cqQD/2qcA//HdmP////////77///////+//7///////z+/f//////1fDo/zW7lf87zaz/bcWp/3hTJf+ujDH/4rYa/+CxDf/69eT////////+/f///////v/+//f8+//9//7//////3LRt/8it47/KbSL/0jPsP9/YTH/WTEA/31fLf/dsyL/7tR5//78+P///////////6Lfzv9Cv5z/a8yw/2HOsf9KwJ7/U7iW/0DHpf9hk2//ZzYB/1o2AP9tTiP/3bUr/9qkAP/lwkb///////////9Vxqb/HLGH/yW4kP9OvJz/hGAy/3NLEf9uTh//h2Eq/5Z0Iv+EZCf/wJst/+OwBv/WnwD/6Mlb////////////sOTW/0zAn/8swpv/cqmL/3YvAP9WLgD/ck8i/+jDOv/puAf/5bUM//HUbP/w3Zr/7dR8//z46v////////////7/////////u+nc/0jBoP9qkGr/iHVQ/9TCnv/luBz/05wA/+bEU//////////+//////////7////////////8/v7///////P7+f9BwJ3/JcKb/1PQs//2/f7/+/LX//Tlr//9+e3///////79+v/+/vv////+/////////////v/////////4/fv/Zcuu/yu0jP9kyKr//P38///////////////+/////v//////////////////////AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=='
 
       - name: Copy Output Files
-        shell: sh
         run: rsync -r --exclude password.txt --exclude .htpasswd --delete site/  dscourses/${{ steps.course-code.outputs.lowercase }}
 
       - name: Push Changes
