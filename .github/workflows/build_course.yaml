@@ -10,13 +10,6 @@ on:
         description: Description of the course to build
         required: true
         type: string
-      pdf_name:
-        description: Name of the resulting PDF file for the course
-        required: true
-        type: string
-    secrets:
-      dscourses_ssh_key:
-        required: true
 
 concurrency: dscourses-writer
 
@@ -29,8 +22,6 @@ jobs:
 
       - name: Checkout pipelines repository
         uses: actions/checkout@v2
-        with:
-          repository: ${{ github.repository_owner }}/pipelines
 
       - name: Get active branch
         id: active-branch
@@ -56,6 +47,12 @@ jobs:
       - name: Get current year
         id: current-year
         run: echo "current-year=$(date +%Y)" >> "$GITHUB_OUTPUT"
+
+      - name: Generate PDF name
+        id: pdf-name
+        run: |
+          shopt -s extglob
+          result=${{ inputs.course_code }} ; result="${result,,}" ; echo result="${result//+([[:space:]])/-}.pdf" >> "$GITHUB_OUTPUT"
 
       - name: Generate MkDocs Configuration
         shell: sh
@@ -148,7 +145,7 @@ jobs:
                 ordered_chapter_level: 2
                 render_js: true
                 headless_chrome_path: chrome
-                output_path: 'pdf/${{ inputs.pdf_name }}'
+                output_path: 'pdf/${{ steps.pdf-name.outputs.result }}'
                 debug_html: false
                 show_anchors: false
                 verbose: false
