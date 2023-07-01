@@ -20,25 +20,25 @@ jobs:
       - id: course-code
         run: course_code=${{ inputs.course_code }} ; echo lowercase=${course_code,,} >> "$GITHUB_OUTPUT"
 
-      - name: Checkout pipelines repository
-        uses: actions/checkout@v2
+      - name: Checkout ${{ github.repository }} repository
+        uses: actions/checkout@v3
 
       - name: Get active branch
         id: active-branch
         run: |
-          course_code=${{ steps.course-code.outputs.lowercase }}
-          echo active-branch=$(jq -r 'if has("$course_code") then .$course_code else "" end' ./branches.json) >> "$GITHUB_OUTPUT"
+          course_code="${{ steps.course-code.outputs.lowercase }}"
+          echo active-branch="$(jq -r "if has(\"$course_code\") then .$course_code else \"\" end" ./branches.json)" >> "$GITHUB_OUTPUT"
 
-      - name: Checkout ${{ inputs.course_code }} repository
-        uses: actions/checkout@v2
+      - name: Checkout ${{ github.repository_owner }}/${{ inputs.course_code }} repository
+        uses: actions/checkout@v3
         with:
           repository: ${{ github.repository_owner }}/${{ inputs.course_code }}
           path: docs
           ref: ${{ steps.active-branch.outputs.active-branch }}
           token: ${{ secrets.PAT_TOKEN }}
 
-      - name: Checkout dscourses repository
-        uses: actions/checkout@v2
+      - name: Checkout ${{ github.repository_owner }}/dscourses repository
+        uses: actions/checkout@v3
         with:
           repository: ${{ github.repository_owner }}/dscourses
           path: dscourses
@@ -52,7 +52,7 @@ jobs:
         id: pdf-name
         run: |
           shopt -s extglob
-          result=${{ inputs.course_code }} ; result="${result,,}" ; echo result="${result//+([[:space:]])/-}.pdf" >> "$GITHUB_OUTPUT"
+          result='${{ inputs.course_description }}' ; result="${result,,}" ; echo result="${result//+([[:space:]])/-}.pdf" >> "$GITHUB_OUTPUT"
 
       - name: Generate MkDocs Configuration
         shell: sh
@@ -151,11 +151,6 @@ jobs:
                 verbose: false
           EOF
 
-      - name: Set Up Python
-        uses: actions/setup-python@v2
-        with:
-          python-version: '3.x'
-
       - name: Set Up Chromium
         uses: browser-actions/setup-chrome@latest
         with:
@@ -181,7 +176,7 @@ jobs:
 
       - name: Copy Output Files
         shell: sh
-        run: rsync -r --delete site/ --exclude password.txt --exclude .htpasswd dscourses/${{ steps.string.outputs.lowercase }}
+        run: rsync -r --exclude password.txt --exclude .htpasswd --delete site/  dscourses/${{ steps.course-code.outputs.lowercase }}
 
       - name: Push Changes
         run: |
