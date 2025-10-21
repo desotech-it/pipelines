@@ -147,7 +147,8 @@ jobs:
                 output_path: 'pdf/${{ steps.pdf-name.outputs.result }}'
                 debug_html: false
                 show_anchors: false
-                verbose: false
+                verbose: true
+                timeout: 300
           EOF
 
       - name: Set Up Chromium
